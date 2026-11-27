@@ -70,4 +70,6 @@ about:
 - Human-readable output escapes terminal control characters so repository names
   cannot inject ANSI sequences into logs.
 - Config and lockfile reads are bounded to 16 MiB and require a regular file.
-- Releases will be signed and accompanied by an SBOM once publishing starts.
+- Release archives are accompanied by per-platform SBOMs and a SHA-256
+  `checksums.txt`. Artifact signing and provenance attestations are not yet
+  implemented; verify checksums before use.

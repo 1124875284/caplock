@@ -568,9 +568,9 @@ configs or secrets.
 - Accounts, multi-tenancy, SSO, hosted policy storage, an approval UI,
   distributed rate limiting, and a production HA gateway are not part of this
   release.
-- GoReleaser, Dockerfile, and GitHub Action contracts are checked locally, but
-  no binary, container, package, or release artifact is published by this
-  development session.
+- GitHub Releases provide checksummed binaries and per-platform SBOMs for
+  v0.1.1. Container images, signed artifacts, and provenance attestations are
+  not published yet.
 
 ## Roadmap
 
