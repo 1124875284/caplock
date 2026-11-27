@@ -243,8 +243,11 @@ func TestReleaseWorkflowContract(t *testing.T) {
 	if !ok {
 		t.Fatal("release.yml is not triggered by push")
 	}
-	if !containsString(push["tags"], "v*") {
-		t.Errorf("release.yml push tags = %v, want v*", push["tags"])
+	if !containsString(push["tags"], "v*.*.*") {
+		t.Errorf("release.yml push tags = %v, want v*.*.*", push["tags"])
+	}
+	if containsString(push["tags"], "v*") {
+		t.Errorf("release.yml push tags = %v, must not use broad v* pattern", push["tags"])
 	}
 	permissions, ok := workflow["permissions"].(map[string]any)
 	if !ok || permissions["contents"] != "write" {
