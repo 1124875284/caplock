@@ -1,4 +1,4 @@
-name: Caplock
+name: CaplockGate
 description: Lock MCP server permissions, test policy regressions, and produce SARIF evidence.
 author: Caplock Contributors
 branding:

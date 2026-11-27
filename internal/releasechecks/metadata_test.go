@@ -95,6 +95,9 @@ func TestRepositoryMetadata(t *testing.T) {
 	}
 
 	action := parseYAMLMap(t, "action.yml", readRepoFile(t, root, "action.yml"))
+	if name, _ := action["name"].(string); name != "CaplockGate" {
+		t.Errorf("action.yml name = %q, want CaplockGate", name)
+	}
 	runs, ok := action["runs"].(map[string]any)
 	if !ok {
 		t.Fatal("action.yml has no runs object")

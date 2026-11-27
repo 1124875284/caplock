@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented here.
 
+## 0.1.1 - 2026-11-27
+
+### Fixed
+
+- Renamed the Marketplace action display name to `CaplockGate` so it can be
+  published without colliding with an existing GitHub Action name. The project,
+  repository, CLI, Go module, and `uses: 1124875284/caplock@v0` reference are
+  unchanged.
+
 ## 0.1.0 - 2026-11-27
 
 First public capability release.

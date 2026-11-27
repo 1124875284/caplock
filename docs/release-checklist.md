@@ -34,12 +34,14 @@ The module and public references must stay coherent:
 module github.com/1124875284/caplock
 install github.com/1124875284/caplock/cmd/caplock@latest
 action 1124875284/caplock@v0
+marketplace CaplockGate
 ```
 
 `go test ./internal/releasechecks -v` validates the module path, README install
-and Action references, issue links, composite Action shell fields, GoReleaser
-targets/archives/checksum/SBOM config, release-tag workflow, Dockerfile stages
-and static build settings, and the required scripts and Makefile targets.
+and Action references, the unique Marketplace display name, issue links,
+composite Action shell fields, GoReleaser targets/archives/checksum/SBOM config,
+release-tag workflow, Dockerfile stages and static build settings, and the
+required scripts and Makefile targets.
 
 ## Required local checks
 

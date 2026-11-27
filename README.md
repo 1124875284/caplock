@@ -27,7 +27,7 @@ $ caplock diff old.lock new.lock --exit-code
   ~ tool create_issue (description, inputSchema, capabilities)
 ```
 
-> **Status: v0.1.0.** The fact, intent, evidence, and execution layers are
+> **Status: v0.1.1.** The fact, intent, evidence, and execution layers are
 > implemented: static discovery, deterministic locking, `tools/list` capture,
 > constrained natural-language drafting, Policy IR compilation/lint,
 > deterministic evaluation, a 50-case regression corpus, heuristic attack-graph
@@ -509,6 +509,9 @@ backends](docs/export.md), the [policy source schema](schemas/policy.schema.json
 and the [runnable example](examples/policy).
 
 ## GitHub Action
+
+The Marketplace action is published as **CaplockGate**; its repository path and
+usage remain `1124875284/caplock`.
 
 ```yaml
 - uses: 1124875284/caplock@v0
