@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://caplock.dev/schemas/replay.schema.json",
+  "title": "Caplock trace replay report",
+  "description": "Deterministic comparison of recorded trace decisions against a revised policy.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "policy", "total", "unchanged", "changed", "weakened", "strengthened", "argsMissing", "argsRedacted", "changes"],
+  "properties": {
+    "version": {"const": 1},
+    "policy": {"type": "string", "minLength": 1},
+    "source": {"type": "string"},
+    "total": {"type": "integer", "minimum": 0},
+    "unchanged": {"type": "integer", "minimum": 0},
+    "changed": {"type": "integer", "minimum": 0},
+    "weakened": {"type": "integer", "minimum": 0},
+    "strengthened": {"type": "integer", "minimum": 0},
+    "argsMissing": {"type": "integer", "minimum": 0},
+    "argsRedacted": {"type": "integer", "minimum": 0},
+    "changes": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/change"}
+    }
+  },
+  "$defs": {
+    "effect": {
+      "type": "string",
+      "enum": ["allow", "deny", "require_approval"]
+    },
+    "stringArray": {
+      "type": "array",
+      "items": {"type": "string"},
+      "uniqueItems": true
+    },
+    "decisionSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["effect", "default", "obligations"],
+      "properties": {
+        "effect": {"$ref": "#/$defs/effect"},
+        "ruleId": {"type": "string"},
+        "default": {"type": "boolean"},
+        "obligations": {"$ref": "#/$defs/stringArray"}
+      }
+    },
+    "change": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["time", "subject", "tool", "argumentsCaptured", "direction", "before", "after"],
+      "properties": {
+        "time": {"type": "string", "format": "date-time"},
+        "subject": {"type": "string", "minLength": 1},
+        "tool": {"type": "string", "minLength": 1},
+        "argumentsCaptured": {"type": "boolean"},
+        "redactedFields": {"$ref": "#/$defs/stringArray"},
+        "direction": {"type": "string", "enum": ["weakened", "strengthened", "changed"]},
+        "before": {"$ref": "#/$defs/decisionSummary"},
+        "after": {"$ref": "#/$defs/decisionSummary"}
+      }
+    }
+  }
+}

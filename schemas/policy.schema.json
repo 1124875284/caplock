@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://caplock.dev/schemas/policy.schema.json",
+  "title": "Caplock policy set",
+  "description": "Human-authored v1alpha1 policy source compiled into Caplock Policy IR.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["apiVersion", "kind", "metadata", "spec"],
+  "properties": {
+    "apiVersion": {"const": "caplock/v1alpha1"},
+    "kind": {"const": "PolicySet"},
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "owner": {"type": "string", "minLength": 1},
+        "description": {"type": "string"}
+      }
+    },
+    "spec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["defaults", "rules"],
+      "properties": {
+        "defaults": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["effect"],
+          "properties": {
+            "effect": {"$ref": "#/$defs/effect"}
+          }
+        },
+        "subjects": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/subject"}
+        },
+        "rules": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/rule"}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "effect": {
+      "type": "string",
+      "enum": ["allow", "deny", "require_approval"]
+    },
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "parent": {"type": "string", "minLength": 1},
+        "delegation": {"type": "string", "enum": ["attenuate-only"]}
+      }
+    },
+    "rule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "effect", "match"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "effect": {"$ref": "#/$defs/effect"},
+        "priority": {"type": "integer", "minimum": 0},
+        "match": {"$ref": "#/$defs/match"},
+        "obligations": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/obligation"}
+        }
+      }
+    },
+    "obligation": {
+      "type": "string",
+      "enum": ["audit", "alert", "redact", "human_approval", "rate_limit"]
+    },
+    "stringArray": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "match": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "subject": {"type": "string", "minLength": 1},
+        "tool": {"$ref": "#/$defs/stringArray"},
+        "capability": {"$ref": "#/$defs/stringArray"},
+        "dataClass": {"$ref": "#/$defs/stringArray"},
+        "sink": {"type": "string", "minLength": 1},
+        "args": {"type": "object"},
+        "context": {"$ref": "#/$defs/context"},
+        "provenance": {"$ref": "#/$defs/provenance"}
+      }
+    },
+    "context": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "time": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["outside"],
+          "properties": {
+            "outside": {"type": "string", "minLength": 1}
+          }
+        },
+        "environment": {"type": "string", "minLength": 1},
+        "attributes": {
+          "type": "object",
+          "additionalProperties": {"type": "string"}
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contains"],
+      "properties": {
+        "contains": {
+          "oneOf": [
+            {"type": "string", "minLength": 1},
+            {"$ref": "#/$defs/stringArray"}
+          ]
+        }
+      }
+    }
+  }
+}

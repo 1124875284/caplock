@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "servers": [
+    {
+      "name": "filesystem",
+      "source": ".mcp.json",
+      "transport": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "./workspace"
+      ],
+      "url": null,
+      "envKeys": [
+        "LOG_LEVEL"
+      ],
+      "headerKeys": [],
+      "configHash": "sha256:5bbede0e682c5d1884f67e0cd62875b1395ca21264193b5b6429840dedd4797c"
+    },
+    {
+      "name": "github",
+      "source": ".mcp.json",
+      "transport": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github"
+      ],
+      "url": null,
+      "envKeys": [
+        "GITHUB_TOKEN"
+      ],
+      "headerKeys": [],
+      "configHash": "sha256:eb05dee82774dabd5e600add3e352919058a90d806e8276e2e4c0c27110176b5"
+    }
+  ]
+}

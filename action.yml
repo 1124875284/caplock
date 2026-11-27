@@ -1,0 +1,152 @@
+name: Caplock
+description: Lock MCP server permissions, test policy regressions, and produce SARIF evidence.
+author: Caplock Contributors
+branding:
+  icon: lock
+  color: blue
+inputs:
+  path:
+    description: Project path.
+    required: false
+    default: "."
+  lockfile:
+    description: Lockfile path.
+    required: false
+    default: "caplock.lock"
+  fail-on-change:
+    description: Fail when the committed lockfile is out of date.
+    required: false
+    default: "true"
+  policy:
+    description: Optional caplock.yaml path. Policy checks are skipped when empty.
+    required: false
+    default: ""
+  corpus:
+    description: Optional evidence corpus path. Defaults to the embedded 50-case baseline.
+    required: false
+    default: ""
+  subject:
+    description: Subject used for tool-coverage checks.
+    required: false
+    default: "agent"
+  fail-on-policy:
+    description: Fail when a policy regression or invariant violation is found.
+    required: false
+    default: "true"
+  strict-lint:
+    description: Treat policy lint warnings as failures.
+    required: false
+    default: "false"
+  sarif-file:
+    description: SARIF report path written by the policy step.
+    required: false
+    default: "caplock.sarif"
+outputs:
+  sarif-file:
+    description: Path to the generated SARIF report (when policy is set).
+    value: ${{ inputs.sarif-file }}
+runs:
+  using: composite
+  steps:
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version-file: "${{ github.action_path }}/go.mod"
+        cache: true
+        cache-dependency-path: "${{ github.action_path }}/go.sum"
+    - name: Build Caplock
+      shell: bash
+      run: |
+        set -euo pipefail
+        action_path="${GITHUB_ACTION_PATH}"
+        runner_temp="${RUNNER_TEMP}"
+        binary="${runner_temp}/caplock"
+        if [ "${RUNNER_OS}" = "Windows" ]; then
+          action_path="$(cygpath -u "${GITHUB_ACTION_PATH}")"
+          runner_temp="$(cygpath -u "${RUNNER_TEMP}")"
+          binary="${binary}.exe"
+        fi
+        (cd "${action_path}" && go build -trimpath -o "${binary}" ./cmd/caplock)
+    - name: Refresh lockfile
+      shell: bash
+      env:
+        CAPLOCK_PATH: ${{ inputs.path }}
+        CAPLOCK_LOCKFILE: ${{ inputs.lockfile }}
+      run: |
+        set -euo pipefail
+        runner_temp="${RUNNER_TEMP}"
+        if [ "${RUNNER_OS}" = "Windows" ]; then
+          runner_temp="$(cygpath -u "${RUNNER_TEMP}")"
+        fi
+        binary="${runner_temp}/caplock"
+        if [ "${RUNNER_OS}" = "Windows" ]; then binary="${binary}.exe"; fi
+        "${binary}" lock "${CAPLOCK_PATH}" --output "${CAPLOCK_LOCKFILE}"
+    - name: Check for drift
+      id: drift
+      shell: bash
+      env:
+        CAPLOCK_LOCKFILE: ${{ inputs.lockfile }}
+      run: |
+        if [ -n "$(git status --porcelain -- "${CAPLOCK_LOCKFILE}")" ]; then
+          git --no-pager diff -- "${CAPLOCK_LOCKFILE}" || true
+          echo "changed=true" >> "${GITHUB_OUTPUT}"
+        fi
+    - name: Fail on drift
+      if: inputs.fail-on-change == 'true' && steps.drift.outputs.changed == 'true'
+      shell: bash
+      run: exit 1
+    - name: Policy lint, regression, and SARIF
+      if: inputs.policy != ''
+      shell: bash
+      env:
+        CAPLOCK_POLICY: ${{ inputs.policy }}
+        CAPLOCK_CORPUS: ${{ inputs.corpus }}
+        CAPLOCK_LOCKFILE: ${{ inputs.lockfile }}
+        CAPLOCK_SUBJECT: ${{ inputs.subject }}
+        CAPLOCK_FAIL_ON_POLICY: ${{ inputs.fail-on-policy }}
+        CAPLOCK_STRICT_LINT: ${{ inputs.strict-lint }}
+        CAPLOCK_SARIF: ${{ inputs.sarif-file }}
+      run: |
+        set -euo pipefail
+        runner_temp="${RUNNER_TEMP}"
+        if [ "${RUNNER_OS}" = "Windows" ]; then
+          runner_temp="$(cygpath -u "${RUNNER_TEMP}")"
+        fi
+        binary="${runner_temp}/caplock"
+        if [ "${RUNNER_OS}" = "Windows" ]; then binary="${binary}.exe"; fi
+        if [ ! -f "${CAPLOCK_POLICY}" ]; then
+          echo "::error::policy file not found: ${CAPLOCK_POLICY}"
+          exit 2
+        fi
+
+        lint_args=("${CAPLOCK_POLICY}")
+        if [ "${CAPLOCK_STRICT_LINT}" = "true" ]; then
+          lint_args+=(--strict)
+        fi
+        "${binary}" lint "${lint_args[@]}"
+
+        args=("${CAPLOCK_POLICY}" --subject "${CAPLOCK_SUBJECT}")
+        report_args=("${CAPLOCK_POLICY}" --subject "${CAPLOCK_SUBJECT}" --format sarif --output "${CAPLOCK_SARIF}")
+        if [ -n "${CAPLOCK_CORPUS}" ]; then
+          args+=(--corpus "${CAPLOCK_CORPUS}")
+          report_args+=(--corpus "${CAPLOCK_CORPUS}")
+        fi
+        if [ -f "${CAPLOCK_LOCKFILE}" ]; then
+          args+=(--lockfile "${CAPLOCK_LOCKFILE}")
+          report_args+=(--lockfile "${CAPLOCK_LOCKFILE}")
+        fi
+        if [ "${CAPLOCK_FAIL_ON_POLICY}" != "true" ]; then
+          args+=(--allow-failures)
+        fi
+
+        set +e
+        "${binary}" test "${args[@]}"
+        test_status=$?
+        "${binary}" report "${report_args[@]}"
+        report_status=$?
+        set -e
+
+        if [ "${test_status}" -ne 0 ]; then
+          exit "${test_status}"
+        fi
+        exit "${report_status}"

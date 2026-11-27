@@ -1,0 +1,15 @@
+apiVersion: caplock/v1alpha1
+kind: PolicySet
+metadata:
+  name: loose-agent
+  owner: demo
+  description: Deliberately permissive policy used to demonstrate policy gaps
+spec:
+  defaults:
+    effect: allow
+  subjects:
+    - id: orchestrator
+    - id: finance-analyst
+      parent: orchestrator
+      delegation: attenuate-only
+  rules: []

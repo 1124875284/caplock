@@ -1,0 +1,240 @@
+{
+  "irVersion": 1,
+  "policy": "finance-agent",
+  "defaults": {
+    "effect": "deny"
+  },
+  "subjects": [
+    {
+      "id": "finance-analyst",
+      "parent": "orchestrator",
+      "delegation": "attenuate-only"
+    },
+    {
+      "id": "orchestrator"
+    }
+  ],
+  "rules": [
+    {
+      "id": "deny-destructive",
+      "effect": "deny",
+      "priority": 100,
+      "match": {
+        "capability": [
+          "destructive"
+        ]
+      },
+      "obligations": [
+        "alert",
+        "audit"
+      ],
+      "source": {
+        "file": "caplock.yaml",
+        "line": 16,
+        "column": 7
+      }
+    },
+    {
+      "id": "deny-secret-exfiltration",
+      "effect": "deny",
+      "priority": 100,
+      "match": {
+        "capability": [
+          "comms",
+          "external",
+          "network"
+        ],
+        "dataClass": [
+          "secret"
+        ]
+      },
+      "obligations": [
+        "alert",
+        "audit",
+        "redact"
+      ],
+      "source": {
+        "file": "caplock.yaml",
+        "line": 22,
+        "column": 7
+      }
+    },
+    {
+      "id": "deny-identity-escalation",
+      "effect": "deny",
+      "priority": 100,
+      "match": {
+        "capability": [
+          "identity"
+        ],
+        "args": {
+          "role": {
+            "$in": [
+              "admin",
+              "owner",
+              "superuser"
+            ]
+          }
+        }
+      },
+      "obligations": [
+        "alert",
+        "audit"
+      ],
+      "source": {
+        "file": "caplock.yaml",
+        "line": 29,
+        "column": 7
+      }
+    },
+    {
+      "id": "deny-shell-execution",
+      "effect": "deny",
+      "priority": 100,
+      "match": {
+        "capability": [
+          "execute"
+        ]
+      },
+      "obligations": [
+        "alert",
+        "audit"
+      ],
+      "source": {
+        "file": "caplock.yaml",
+        "line": 37,
+        "column": 7
+      }
+    },
+    {
+      "id": "deny-privileged-file-write",
+      "effect": "deny",
+      "priority": 100,
+      "match": {
+        "tool": [
+          "write_file"
+        ],
+        "args": {
+          "path": {
+            "$prefix": "/etc/"
+          }
+        }
+      },
+      "obligations": [
+        "alert",
+        "audit"
+      ],
+      "source": {
+        "file": "caplock.yaml",
+        "line": 43,
+        "column": 7
+      }
+    },
+    {
+      "id": "finance-write-after-hours",
+      "effect": "deny",
+      "priority": 95,
+      "match": {
+        "capability": [
+          "finance.approve",
+          "finance.write"
+        ],
+        "context": {
+          "time": {
+            "outside": "Mon-Fri 09:00-18:00 Asia/Shanghai"
+          }
+        }
+      },
+      "obligations": [
+        "alert",
+        "audit"
+      ],
+      "source": {
+        "file": "caplock.yaml",
+        "line": 51,
+        "column": 7
+      }
+    },
+    {
+      "id": "approve-external-provenance-egress",
+      "effect": "require_approval",
+      "priority": 90,
+      "match": {
+        "capability": [
+          "comms",
+          "external",
+          "network"
+        ],
+        "provenance": {
+          "contains": [
+            "external_web"
+          ]
+        }
+      },
+      "obligations": [
+        "audit",
+        "human_approval",
+        "redact"
+      ],
+      "source": {
+        "file": "caplock.yaml",
+        "line": 60,
+        "column": 7
+      }
+    },
+    {
+      "id": "approve-finance-write",
+      "effect": "require_approval",
+      "priority": 80,
+      "match": {
+        "capability": [
+          "finance.approve",
+          "finance.write"
+        ]
+      },
+      "obligations": [
+        "audit",
+        "human_approval"
+      ],
+      "source": {
+        "file": "caplock.yaml",
+        "line": 68,
+        "column": 7
+      }
+    },
+    {
+      "id": "approve-write-tools",
+      "effect": "require_approval",
+      "priority": 70,
+      "match": {
+        "capability": [
+          "write"
+        ]
+      },
+      "obligations": [
+        "audit",
+        "human_approval"
+      ],
+      "source": {
+        "file": "caplock.yaml",
+        "line": 74,
+        "column": 7
+      }
+    },
+    {
+      "id": "allow-read-only-tools",
+      "effect": "allow",
+      "priority": 10,
+      "match": {
+        "capability": [
+          "read"
+        ]
+      },
+      "source": {
+        "file": "caplock.yaml",
+        "line": 80,
+        "column": 7
+      }
+    }
+  ]
+}

@@ -1,0 +1,162 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://caplock.dev/schemas/report.schema.json",
+  "title": "Caplock evidence report",
+  "description": "Deterministic attack-path, policy-gap, coverage, and baseline report.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "policy", "corpus", "passed", "summary", "blastRadius", "paths", "gaps", "invariants"],
+  "properties": {
+    "version": {"const": 1},
+    "policy": {"type": "string"},
+    "corpus": {"type": "string"},
+    "passed": {"type": "boolean"},
+    "summary": {"$ref": "#/$defs/summary"},
+    "blastRadius": {"$ref": "#/$defs/blastRadius"},
+    "paths": {"type": "array", "items": {"$ref": "#/$defs/path"}},
+    "gaps": {"type": "array", "items": {"$ref": "#/$defs/gap"}},
+    "invariants": {"type": "array", "items": {"$ref": "#/$defs/invariant"}},
+    "coverage": {"type": "array", "items": {"$ref": "#/$defs/coverage"}},
+    "baselineChanges": {"type": "array", "items": {"$ref": "#/$defs/baselineChange"}}
+  },
+  "$defs": {
+    "stringArray": {
+      "type": "array",
+      "items": {"type": "string"},
+      "uniqueItems": true
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["total", "passed", "failed", "blocked", "approvalRequired", "allowed", "criticalGaps", "coveredTools", "uncoveredTools"],
+      "properties": {
+        "total": {"type": "integer", "minimum": 0},
+        "passed": {"type": "integer", "minimum": 0},
+        "failed": {"type": "integer", "minimum": 0},
+        "blocked": {"type": "integer", "minimum": 0},
+        "approvalRequired": {"type": "integer", "minimum": 0},
+        "allowed": {"type": "integer", "minimum": 0},
+        "criticalGaps": {"type": "integer", "minimum": 0},
+        "coveredTools": {"type": "integer", "minimum": 0},
+        "uncoveredTools": {"type": "integer", "minimum": 0}
+      }
+    },
+    "blastRadius": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["highRiskCases", "highRiskAllowed", "highRiskApprovalRequired", "highRiskBlocked", "exposedCases", "exposedTools", "exposedCapabilities", "exposedSinks"],
+      "properties": {
+        "highRiskCases": {"type": "integer", "minimum": 0},
+        "highRiskAllowed": {"type": "integer", "minimum": 0},
+        "highRiskApprovalRequired": {"type": "integer", "minimum": 0},
+        "highRiskBlocked": {"type": "integer", "minimum": 0},
+        "exposedCases": {"$ref": "#/$defs/stringArray"},
+        "exposedTools": {"$ref": "#/$defs/stringArray"},
+        "exposedCapabilities": {"$ref": "#/$defs/stringArray"},
+        "exposedSinks": {"$ref": "#/$defs/stringArray"}
+      }
+    },
+    "pathStep": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tool": {"type": "string"},
+        "capabilities": {"$ref": "#/$defs/stringArray"},
+        "sink": {"type": "string"},
+        "note": {"type": "string"}
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["file", "line"],
+      "properties": {
+        "file": {"type": "string"},
+        "line": {"type": "integer", "minimum": 0},
+        "column": {"type": "integer", "minimum": 0}
+      }
+    },
+    "path": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["caseId", "tags", "severity", "path", "status", "effect", "default", "obligations", "passed"],
+      "properties": {
+        "caseId": {"type": "string"},
+        "description": {"type": "string"},
+        "tags": {"$ref": "#/$defs/stringArray"},
+        "severity": {"enum": ["info", "low", "medium", "high", "critical"]},
+        "path": {"type": "array", "items": {"$ref": "#/$defs/pathStep"}},
+        "status": {"enum": ["blocked", "approval_required", "allowed"]},
+        "effect": {"enum": ["allow", "deny", "require_approval"]},
+        "ruleId": {"type": "string"},
+        "default": {"type": "boolean"},
+        "obligations": {"$ref": "#/$defs/stringArray"},
+        "passed": {"type": "boolean"}
+      }
+    },
+    "gap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "code", "severity", "message", "source"],
+      "properties": {
+        "kind": {"enum": ["regression", "invariant", "coverage"]},
+        "code": {"type": "string"},
+        "caseId": {"type": "string"},
+        "severity": {"enum": ["info", "low", "medium", "high", "critical"]},
+        "message": {"type": "string"},
+        "source": {"$ref": "#/$defs/source"}
+      }
+    },
+    "violation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["caseId", "subject", "parent", "childEffect", "parentEffect", "message"],
+      "properties": {
+        "caseId": {"type": "string"},
+        "subject": {"type": "string"},
+        "parent": {"type": "string"},
+        "childEffect": {"type": "string"},
+        "parentEffect": {"type": "string"},
+        "message": {"type": "string"}
+      }
+    },
+    "invariant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "passed", "checked", "violations"],
+      "properties": {
+        "code": {"type": "string"},
+        "passed": {"type": "boolean"},
+        "checked": {"type": "integer", "minimum": 0},
+        "violations": {"type": "array", "items": {"$ref": "#/$defs/violation"}}
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["server", "tool", "subject", "covered", "ruleIds", "conditional"],
+      "properties": {
+        "server": {"type": "string"},
+        "tool": {"type": "string"},
+        "subject": {"type": "string"},
+        "covered": {"type": "boolean"},
+        "ruleIds": {"$ref": "#/$defs/stringArray"},
+        "conditional": {"type": "boolean"}
+      }
+    },
+    "baselineChange": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["caseId", "oldEffect", "newEffect", "oldDefault", "newDefault"],
+      "properties": {
+        "caseId": {"type": "string"},
+        "oldEffect": {"type": "string"},
+        "newEffect": {"type": "string"},
+        "oldRuleId": {"type": "string"},
+        "newRuleId": {"type": "string"},
+        "oldDefault": {"type": "boolean"},
+        "newDefault": {"type": "boolean"}
+      }
+    }
+  }
+}

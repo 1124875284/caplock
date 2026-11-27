@@ -1,0 +1,20 @@
+apiVersion: caplock/v1alpha1
+kind: PolicySet
+metadata:
+  name: obligation-demo
+  owner: demo
+  description: Demonstrates redact, alert, audit, and rate_limit runtime obligations
+spec:
+  defaults:
+    effect: deny
+  subjects:
+    - id: orchestrator
+    - id: finance-analyst
+      parent: orchestrator
+      delegation: attenuate-only
+  rules:
+    - id: allow-read-with-obligations
+      effect: allow
+      match:
+        capability: [read]
+      obligations: [audit, alert, redact, rate_limit]

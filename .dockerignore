@@ -1,0 +1,7 @@
+.git
+.idea
+bin
+coverage.out
+demo/output
+demo/screenshots
+bench/generated

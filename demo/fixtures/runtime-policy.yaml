@@ -1,0 +1,32 @@
+apiVersion: caplock/v1alpha1
+kind: PolicySet
+metadata:
+  name: runtime-demo
+  owner: security
+  description: Demo policy for the MCP runtime proxy
+spec:
+  defaults:
+    effect: deny
+  subjects:
+    - id: orchestrator
+    - id: finance-analyst
+      parent: orchestrator
+      delegation: attenuate-only
+  rules:
+    - id: deny-destructive
+      effect: deny
+      priority: 100
+      match:
+        capability: [destructive]
+      obligations: [audit, alert]
+    - id: approve-external-egress
+      effect: require_approval
+      priority: 90
+      match:
+        capability: [comms, external]
+      obligations: [audit, human_approval, redact]
+    - id: allow-read-only-tools
+      effect: allow
+      priority: 10
+      match:
+        capability: [read]

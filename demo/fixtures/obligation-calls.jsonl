@@ -1,0 +1,2 @@
+{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"read_file","arguments":{"path":"/workspace/readme.md","token":"raw-token","nested":{"password":"raw-password","safe":"ok"}}}}
+{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"read_file","arguments":{"path":"/workspace/finance.csv","token":"second-token","nested":{"password":"second-password","safe":"ok"}}}}

@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://caplock.dev/schemas/trace.schema.json",
+  "title": "Caplock trace record",
+  "description": "One strict JSONL record capturing a replayable MCP tool-call request and the policy decision observed at runtime.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "time", "policy", "subject", "tool", "capabilities", "argumentsCaptured", "decision"],
+  "properties": {
+    "version": {"const": 1},
+    "time": {"type": "string", "format": "date-time"},
+    "policy": {"type": "string", "minLength": 1},
+    "subject": {"type": "string", "minLength": 1},
+    "tool": {"type": "string", "minLength": 1},
+    "capabilities": {"$ref": "#/$defs/stringArray"},
+    "capabilitySource": {"type": "string"},
+    "servers": {"$ref": "#/$defs/stringArray"},
+    "sink": {"type": "string"},
+    "environment": {"type": "string"},
+    "dataClass": {"$ref": "#/$defs/stringArray"},
+    "provenance": {"$ref": "#/$defs/stringArray"},
+    "argumentsCaptured": {"type": "boolean"},
+    "args": {"type": "object"},
+    "argsHash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "redactedFields": {"$ref": "#/$defs/stringArray"},
+    "decision": {"$ref": "#/$defs/decision"}
+  },
+  "allOf": [
+    {
+      "if": {"required": ["args"]},
+      "then": {"properties": {"argumentsCaptured": {"const": true}}}
+    },
+    {
+      "if": {"required": ["redactedFields"]},
+      "then": {"properties": {"argumentsCaptured": {"const": true}, "argsHash": {"type": "string"}}}
+    }
+  ],
+  "$defs": {
+    "effect": {
+      "type": "string",
+      "enum": ["allow", "deny", "require_approval"]
+    },
+    "stringArray": {
+      "type": "array",
+      "items": {"type": "string"},
+      "uniqueItems": true
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["effect", "default", "obligations", "forwarded"],
+      "properties": {
+        "effect": {"$ref": "#/$defs/effect"},
+        "ruleId": {"type": "string"},
+        "default": {"type": "boolean"},
+        "obligations": {"$ref": "#/$defs/stringArray"},
+        "forwarded": {"type": "boolean"},
+        "reason": {"type": "string"},
+        "approvalMode": {"type": "string", "enum": ["block", "forward"]}
+      }
+    }
+  }
+}

@@ -1,0 +1,17 @@
+# Example constrained natural-language policy brief.
+# Draft it with:
+#   caplock draft examples/policy/security-brief.txt \
+#     --name finance-draft --subject finance-analyst --parent orchestrator
+
+Child agents must not exceed their parent permissions.
+Deny destructive tool calls.
+Deny shell command execution.
+Deny secret data from leaving through email, network, or upload tools.
+Deny assignment of admin, owner, or superuser roles.
+Deny writes below /etc/.
+Finance tools are forbidden outside Mon-Fri 09:00-18:00 Asia/Shanghai.
+External web content must not flow to email tools.
+Require approval when external web content reaches Slack.
+Require human approval when PII is sent to an external destination.
+Require approval for all write operations.
+Allow read-only operations.

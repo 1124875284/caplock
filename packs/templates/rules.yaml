@@ -1,0 +1,91 @@
+apiVersion: caplock/v1alpha1
+kind: PolicySet
+metadata:
+  name: rule-template-library
+  owner: security
+  description: Fifteen reusable MCP authorization rule patterns
+spec:
+  defaults:
+    effect: deny
+  subjects:
+    - id: agent
+  rules:
+    - id: template-deny-destructive-capability
+      effect: deny
+      match: {capability: [destructive]}
+      obligations: [audit, alert]
+    - id: template-deny-shell-execution
+      effect: deny
+      match: {capability: [execute]}
+      obligations: [audit, alert]
+    - id: template-deny-secret-egress
+      effect: deny
+      match:
+        capability: [comms, external, network]
+        dataClass: [secret]
+      obligations: [audit, alert, redact]
+    - id: template-deny-finance-after-hours
+      effect: deny
+      match:
+        capability: [finance.write, finance.approve]
+        context:
+          time: {outside: "Mon-Fri 09:00-18:00 Asia/Shanghai"}
+      obligations: [audit, alert]
+    - id: template-require-approval-external-provenance
+      effect: require_approval
+      match:
+        capability: [comms, external, network]
+        provenance: {contains: external_web}
+      obligations: [audit, human_approval, redact]
+    - id: template-require-approval-write
+      effect: require_approval
+      match: {capability: [write]}
+      obligations: [audit, human_approval]
+    - id: template-deny-privileged-path-write
+      effect: deny
+      match:
+        capability: [write]
+        args: {path: {"$prefix": "/etc/"}}
+      obligations: [audit, alert]
+    - id: template-deny-admin-role-assignment
+      effect: deny
+      match:
+        capability: [identity]
+        args: {role: {"$in": [admin, owner, superuser]}}
+      obligations: [audit, alert]
+    - id: template-require-approval-mailbox-send
+      effect: require_approval
+      match: {sink: email.send}
+      obligations: [audit, human_approval]
+    - id: template-deny-plaintext-network-url
+      effect: deny
+      match:
+        capability: [network]
+        args: {url: {"$prefix": "http://"}}
+      obligations: [audit, alert]
+    - id: template-deny-production-delete
+      effect: deny
+      match:
+        capability: [destructive]
+        context: {environment: production}
+      obligations: [audit, alert]
+    - id: template-allow-read-only
+      effect: allow
+      priority: 10
+      match: {capability: [read]}
+    - id: template-deny-large-finance-transfer
+      effect: require_approval
+      match:
+        capability: [finance.write]
+        args: {amount: {"$exists": true}}
+      obligations: [audit, human_approval]
+    - id: template-require-approval-pii-egress
+      effect: require_approval
+      match:
+        capability: [comms, external, network]
+        dataClass: [pii]
+      obligations: [audit, human_approval, redact]
+    - id: template-deny-unknown-capability
+      effect: deny
+      match: {capability: [unknown]}
+      obligations: [audit, alert]

@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://caplock.dev/schemas/import-mapping.schema.json",
+  "title": "Caplock historical log mapping",
+  "description": "Explicit JSONL or CSV field mapping for caplock import. Missing required facts fail closed.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "inputFormat", "fields"],
+  "properties": {
+    "version": {"const": 1},
+    "inputFormat": {"enum": ["jsonl", "csv"]},
+    "fields": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["time", "policy", "subject", "tool", "capabilities", "decision.effect"],
+      "properties": {
+        "time": {"$ref": "#/$defs/field"},
+        "policy": {"$ref": "#/$defs/field"},
+        "subject": {"$ref": "#/$defs/field"},
+        "tool": {"$ref": "#/$defs/field"},
+        "capabilities": {"$ref": "#/$defs/field"},
+        "sink": {"$ref": "#/$defs/field"},
+        "environment": {"$ref": "#/$defs/field"},
+        "capabilitySource": {"$ref": "#/$defs/field"},
+        "servers": {"$ref": "#/$defs/field"},
+        "dataClass": {"$ref": "#/$defs/field"},
+        "provenance": {"$ref": "#/$defs/field"},
+        "args": {"$ref": "#/$defs/field"},
+        "argsHash": {"$ref": "#/$defs/field"},
+        "argumentsCaptured": {"$ref": "#/$defs/field"},
+        "decision.effect": {"$ref": "#/$defs/field"},
+        "decision.ruleId": {"$ref": "#/$defs/field"},
+        "decision.reason": {"$ref": "#/$defs/field"},
+        "decision.obligations": {"$ref": "#/$defs/field"},
+        "decision.default": {"$ref": "#/$defs/field"},
+        "decision.forwarded": {"$ref": "#/$defs/field"},
+        "decision.approvalMode": {"$ref": "#/$defs/field"}
+      }
+    }
+  },
+  "$defs": {
+    "field": {"type": "string", "minLength": 1}
+  }
+}

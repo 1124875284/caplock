@@ -1,0 +1,3 @@
+time,policy,subject,tool,capabilities,effect,ruleId,sink,provenance
+2026-11-20T10:15:00Z,finance-agent,finance-analyst,read_file,read,allow,allow-read-only-tools,file.read,
+2026-11-20T10:17:00Z,finance-agent,finance-analyst,send_email,"comms,network",require_approval,approve-external-egress,email.send,external_web

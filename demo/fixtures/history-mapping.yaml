@@ -1,0 +1,12 @@
+version: 1
+inputFormat: csv
+fields:
+  time: time
+  policy: policy
+  subject: subject
+  tool: tool
+  capabilities: capabilities
+  decision.effect: effect
+  decision.ruleId: ruleId
+  sink: sink
+  provenance: provenance

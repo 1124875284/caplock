@@ -1,0 +1,4 @@
+# Deterministic benchmark baseline.
+# Update this file only when policy, corpus, or graph semantics change.
+graph_summary=servers=20 tools=20 sources=3 sinks=9 paths=189 blocked=147 approval_required=42 allowed=0 argument_dependent=0 truncated=false
+corpus=PASS (50/50 cases)

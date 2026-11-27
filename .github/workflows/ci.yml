@@ -1,0 +1,144 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: test (${{ matrix.os }}, ${{ matrix.go }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        go: ["1.24.x", stable]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go }}
+          cache: true
+      - name: Verify modules
+        run: go mod verify
+      - name: Check formatting
+        if: runner.os == 'Linux'
+        shell: bash
+        run: test -z "$(gofmt -l cmd internal packs demo examples)"
+      - name: Vet
+        run: go vet ./...
+      - name: Test
+        run: go test -shuffle=on ./...
+      - name: Race test
+        if: runner.os == 'Linux'
+        run: go test -race ./...
+      - name: Build
+        run: go build -trimpath ./cmd/caplock
+      - name: Policy regression
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          set -euo pipefail
+          go run ./cmd/caplock lint examples/policy/caplock.yaml --strict
+          go run ./cmd/caplock test examples/policy/caplock.yaml
+          go run ./cmd/caplock export examples/policy/caplock.yaml --format rego -o "${RUNNER_TEMP}/caplock-policy.rego"
+          go run ./cmd/caplock report examples/policy/caplock.yaml --format sarif -o "${RUNNER_TEMP}/caplock.sarif"
+          test -s "${RUNNER_TEMP}/caplock.sarif"
+
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+          cache: true
+      - name: Install golangci-lint
+        run: go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.15.0
+      - name: Run golangci-lint
+        run: golangci-lint run
+
+  rego:
+    name: rego parity
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+          cache: true
+      - name: Install OPA
+        uses: open-policy-agent/setup-opa@v2
+        with:
+          version: 1.22.4
+      - name: Compare exported Rego with the Go evaluator
+        run: CAPLOCK_OPA_BIN=opa go test ./internal/exporter -run 'TestOPA(Evaluator|Selector)Parity' -count=1
+
+  vulncheck:
+    name: vulncheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+          cache: true
+      - name: Install govulncheck
+        run: go install golang.org/x/vuln/cmd/govulncheck@v1.10.0
+      - name: Run govulncheck
+        run: govulncheck ./...
+
+  e2e:
+    name: e2e and release contract
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Release metadata contract
+        run: go test ./internal/releasechecks -v
+      - name: Release dry run
+        run: ./scripts/release-dry-run.sh
+      - name: Build CLI
+        shell: bash
+        run: go build -trimpath -o "${RUNNER_TEMP}/caplock" ./cmd/caplock
+      - name: Graph and import smoke test
+        shell: bash
+        run: |
+          set -euo pipefail
+          bin="${RUNNER_TEMP}/caplock"
+          lockfile="${RUNNER_TEMP}/graph.lock"
+          go run ./bench/gen -output "${lockfile}"
+          "${bin}" graph examples/policy/caplock.yaml \
+            --lockfile "${lockfile}" \
+            --subject finance-analyst \
+            --max-paths 10 \
+            --fail-on-exposed
+          if "${bin}" graph demo/fixtures/loose-policy.yaml \
+            --lockfile "${lockfile}" \
+            --subject finance-analyst \
+            --max-paths 10 \
+            --fail-on-exposed >"${RUNNER_TEMP}/loose-graph.txt"; then
+            echo "permissive graph unexpectedly passed --fail-on-exposed" >&2
+            exit 1
+          fi
+          "${bin}" import demo/fixtures/history.csv \
+            --mapping demo/fixtures/history-mapping.yaml \
+            -o "${RUNNER_TEMP}/imported.trace.jsonl"
+          "${bin}" replay "${RUNNER_TEMP}/imported.trace.jsonl" \
+            --policy demo/fixtures/runtime-policy.yaml
+      - name: Security negative suite
+        run: ./scripts/security-negative.sh
+      - name: End-to-end demo
+        run: ./demo/run.sh
+      - name: Demo verification
+        run: ./demo/verify.sh
+      - name: Benchmark baseline
+        run: ./bench/run.sh

@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://caplock.dev/schemas/attackgraph.schema.json",
+  "title": "Caplock attack graph report",
+  "description": "Heuristic source-to-sink paths inferred from a captured MCP tool inventory and evaluated against Policy IR.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "policy", "subject", "evaluationTime", "summary", "paths", "limitations"],
+  "properties": {
+    "version": {"const": 1},
+    "policy": {"type": "string", "minLength": 1},
+    "subject": {"type": "string", "minLength": 1},
+    "evaluationTime": {"type": "string", "format": "date-time"},
+    "summary": {"$ref": "#/$defs/summary"},
+    "paths": {
+      "type": "array",
+      "maxItems": 1000,
+      "items": {"$ref": "#/$defs/path"}
+    },
+    "limitations": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1}
+    }
+  },
+  "$defs": {
+    "stringArray": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "effect": {"enum": ["allow", "deny", "require_approval"]},
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["servers", "tools", "sources", "sinks", "paths", "blocked", "approvalRequired", "allowed", "argumentDependent", "truncated"],
+      "properties": {
+        "servers": {"type": "integer", "minimum": 0},
+        "tools": {"type": "integer", "minimum": 0},
+        "sources": {"type": "integer", "minimum": 0},
+        "sinks": {"type": "integer", "minimum": 0},
+        "paths": {"type": "integer", "minimum": 0},
+        "blocked": {"type": "integer", "minimum": 0},
+        "approvalRequired": {"type": "integer", "minimum": 0},
+        "allowed": {"type": "integer", "minimum": 0},
+        "argumentDependent": {"type": "integer", "minimum": 0},
+        "truncated": {"type": "boolean"}
+      }
+    },
+    "step": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["server", "tool", "capabilities", "role"],
+      "properties": {
+        "server": {"type": "string", "minLength": 1},
+        "tool": {"type": "string", "minLength": 1},
+        "capabilities": {"$ref": "#/$defs/stringArray"},
+        "sink": {"type": "string"},
+        "role": {"enum": ["source", "intermediate", "sink"]},
+        "note": {"type": "string"}
+      }
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["effect", "default", "obligations"],
+      "properties": {
+        "effect": {"$ref": "#/$defs/effect"},
+        "ruleId": {"type": "string"},
+        "default": {"type": "boolean"},
+        "obligations": {"$ref": "#/$defs/stringArray"}
+      }
+    },
+    "path": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "severity", "sourceLabels", "sink", "steps", "decision", "status", "controlled", "argumentDependent"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "severity": {"enum": ["info", "low", "medium", "high", "critical"]},
+        "sourceLabels": {"$ref": "#/$defs/stringArray"},
+        "dataClass": {"$ref": "#/$defs/stringArray"},
+        "provenance": {"$ref": "#/$defs/stringArray"},
+        "sink": {"type": "string", "minLength": 1},
+        "steps": {
+          "type": "array",
+          "minItems": 2,
+          "items": {"$ref": "#/$defs/step"}
+        },
+        "decision": {"$ref": "#/$defs/decision"},
+        "status": {"enum": ["blocked", "approval_required", "allowed"]},
+        "controlled": {"type": "boolean"},
+        "argumentDependent": {"type": "boolean"}
+      }
+    }
+  }
+}

@@ -1,0 +1,56 @@
+version: 2
+project_name: caplock
+
+builds:
+  - id: caplock
+    main: ./cmd/caplock
+    binary: caplock
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w -X github.com/caplock/caplock/internal/version.Version={{.Version}}
+
+archives:
+  - id: caplock
+    formats:
+      - tar.gz
+    format_overrides:
+      - goos: windows
+        formats:
+          - zip
+    files:
+      - LICENSE
+      - NOTICE
+      - README.md
+      - CHANGELOG.md
+      - SECURITY.md
+      - schemas/*
+      - packs/*
+
+checksum:
+  name_template: checksums.txt
+
+sboms:
+  - id: archive
+    artifacts: archive
+
+changelog:
+  use: github
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+      - '^chore:'
+
+release:
+  prerelease: auto
+  footer: |
+    Local-first, no hosted control plane. Verify checksums and inspect the SBOM before use.
