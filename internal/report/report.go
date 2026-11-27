@@ -14,6 +14,7 @@ import (
 	"github.com/1124875284/caplock/internal/policy"
 )
 
+// Version identifies the report output schema.
 const Version = 1
 
 // Summary is the top-level evidence count.

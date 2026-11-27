@@ -133,51 +133,49 @@ func RunStdio(ctx context.Context, options StdioOptions) error {
 	go writeChild(childStdin, forward, writerDone)
 
 	var returnErr error
+readLoop:
 	for {
 		select {
 		case frame, ok := <-inbound:
 			if !ok {
 				close(forward)
-				_ = <-writerDone
+				writerErr := <-writerDone
 				result := <-childDone
-				return combineExit(result, nil)
+				return combineExit(result, writerErr)
 			}
 			if frame.err != nil {
 				if errors.Is(frame.err, ErrFrameTooLarge) {
 					if err := writeRPCError(out, nil, -32600, "request exceeds the message size limit", nil); err != nil {
 						returnErr = err
-						break
+						break readLoop
 					}
 					continue
 				}
 				returnErr = fmt.Errorf("read parent stdin: %w", frame.err)
-				break
+				break readLoop
 			}
 			if err := handleFrame(ctx, options, out, diagnostics, forward, frame.data); err != nil {
 				returnErr = err
-				break
+				break readLoop
 			}
 		case result := <-childDone:
 			close(forward)
-			_ = <-writerDone
-			return combineExit(result, nil)
+			writerErr := <-writerDone
+			return combineExit(result, writerErr)
 		case <-ctx.Done():
 			_ = command.Process.Kill()
 			close(forward)
-			_ = <-writerDone
+			writerErr := <-writerDone
 			<-childDone
-			return ctx.Err()
-		}
-		if returnErr != nil {
-			break
+			return errors.Join(ctx.Err(), writerErr)
 		}
 	}
 
 	_ = command.Process.Kill()
 	close(forward)
-	_ = <-writerDone
+	writerErr := <-writerDone
 	<-childDone
-	return returnErr
+	return errors.Join(returnErr, writerErr)
 }
 
 func combineExit(result childResult, override error) error {
@@ -296,7 +294,7 @@ func auditFailure(output, diagnostics io.Writer, id json.RawMessage, err error) 
 	return fmt.Errorf("write audit record: %w", err)
 }
 
-func alertFailure(output, diagnostics io.Writer, id json.RawMessage, err error) error {
+func alertFailure(output, diagnostics io.Writer, id json.RawMessage, _ error) error {
 	logDiagnostic(diagnostics, "alert write failed; blocking request")
 	return writeRPCError(output, id, -32603, "alert unavailable; request blocked", nil)
 }

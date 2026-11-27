@@ -27,7 +27,7 @@ $ caplock diff old.lock new.lock --exit-code
   ~ tool create_issue (description, inputSchema, capabilities)
 ```
 
-> **Status: v0.1.0-dev.** The fact, intent, evidence, and execution layers are
+> **Status: v0.1.0.** The fact, intent, evidence, and execution layers are
 > implemented: static discovery, deterministic locking, `tools/list` capture,
 > constrained natural-language drafting, Policy IR compilation/lint,
 > deterministic evaluation, a 50-case regression corpus, heuristic attack-graph

@@ -213,17 +213,13 @@ func matchCovers(cover, target *Match) bool {
 		!selectorCovers(cover.DataClass, target.DataClass) {
 		return false
 	}
-	if cover.Provenance == nil {
-		// no constraint
-	} else if target.Provenance == nil || !selectorCovers([]string(cover.Provenance.Contains), []string(target.Provenance.Contains)) {
+	if cover.Provenance != nil && (target.Provenance == nil || !selectorCovers([]string(cover.Provenance.Contains), []string(target.Provenance.Contains))) {
 		return false
 	}
-	if cover.Context == nil {
-		// no constraint
-	} else if target.Context == nil {
-		return false
-	} else if !contextCovers(cover.Context, target.Context) {
-		return false
+	if cover.Context != nil {
+		if target.Context == nil || !contextCovers(cover.Context, target.Context) {
+			return false
+		}
 	}
 	return argsCover(cover.Args, target.Args)
 }

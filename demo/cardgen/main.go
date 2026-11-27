@@ -122,6 +122,7 @@ func readScenario(path string) (scenario, error) {
 }
 
 func readText(path, name string) (string, error) {
+	// #nosec G304 -- cardgen only reads files under the explicit demo output directory.
 	data, err := os.ReadFile(filepath.Join(path, name))
 	if err != nil {
 		return "", err
@@ -166,7 +167,7 @@ func writeCard(path string, value scenario) error {
 	if err := cardTemplate.Execute(&buffer, value); err != nil {
 		return err
 	}
-	return os.WriteFile(path, buffer.Bytes(), 0o644)
+	return os.WriteFile(path, buffer.Bytes(), 0o600)
 }
 
 func writeGallery(path string, scenarios []scenario) error {
@@ -174,7 +175,7 @@ func writeGallery(path string, scenarios []scenario) error {
 	if err := galleryTemplate.Execute(&buffer, scenarios); err != nil {
 		return err
 	}
-	return os.WriteFile(path, buffer.Bytes(), 0o644)
+	return os.WriteFile(path, buffer.Bytes(), 0o600)
 }
 
 func fatalf(format string, args ...any) {

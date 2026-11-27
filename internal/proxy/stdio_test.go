@@ -13,7 +13,7 @@ import (
 	"github.com/1124875284/caplock/internal/trace"
 )
 
-func TestProxyHelperProcess(t *testing.T) {
+func TestProxyHelperProcess(_ *testing.T) {
 	if os.Getenv("GO_WANT_PROXY_HELPER") != "1" {
 		return
 	}

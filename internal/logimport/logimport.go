@@ -241,26 +241,26 @@ func mapRecord(row map[string]any, mapping *Mapping) (trace.Record, error) {
 	if value, ok := lookupOptionalString(row, mapping, "capabilitySource"); ok {
 		record.CapabilitySource = value
 	}
-	if values, err := lookupStringList(row, mapping, "servers", false); err != nil {
+	values, err := lookupStringList(row, mapping, "servers", false)
+	if err != nil {
 		return trace.Record{}, err
-	} else {
-		record.Servers = values
 	}
-	if values, err := lookupStringList(row, mapping, "dataClass", false); err != nil {
+	record.Servers = values
+	values, err = lookupStringList(row, mapping, "dataClass", false)
+	if err != nil {
 		return trace.Record{}, err
-	} else {
-		record.DataClass = values
 	}
-	if values, err := lookupStringList(row, mapping, "provenance", false); err != nil {
+	record.DataClass = values
+	values, err = lookupStringList(row, mapping, "provenance", false)
+	if err != nil {
 		return trace.Record{}, err
-	} else {
-		record.Provenance = values
 	}
-	if values, err := lookupStringList(row, mapping, "decision.obligations", false); err != nil {
+	record.Provenance = values
+	values, err = lookupStringList(row, mapping, "decision.obligations", false)
+	if err != nil {
 		return trace.Record{}, err
-	} else {
-		record.Decision.Obligations = values
 	}
+	record.Decision.Obligations = values
 	if value, ok := lookupOptionalString(row, mapping, "decision.ruleId"); ok {
 		record.Decision.RuleID = value
 	}

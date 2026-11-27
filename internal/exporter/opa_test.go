@@ -288,7 +288,7 @@ func nonNilAnyMap(values map[string]any) map[string]any {
 }
 
 func sortedStrings(values []string) []string {
-	copy := append([]string(nil), values...)
-	sort.Strings(copy)
-	return copy
+	cloned := append([]string(nil), values...)
+	sort.Strings(cloned)
+	return cloned
 }

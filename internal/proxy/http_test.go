@@ -21,6 +21,12 @@ type capturedRequest struct {
 	header http.Header
 }
 
+type httpResult struct {
+	StatusCode int
+	Header     http.Header
+	Body       []byte
+}
+
 func newTestTarget(t *testing.T) (*httptest.Server, *[]capturedRequest, *sync.Mutex) {
 	t.Helper()
 	var mu sync.Mutex
@@ -74,7 +80,7 @@ func newTestProxy(t *testing.T, target *httptest.Server, audit io.Writer, traceW
 	return httptest.NewServer(handler)
 }
 
-func postJSON(t *testing.T, endpoint, body string, headers map[string]string) (*http.Response, []byte) {
+func postJSON(t *testing.T, endpoint, body string, headers map[string]string) httpResult {
 	t.Helper()
 	request, err := http.NewRequest(http.MethodPost, endpoint, strings.NewReader(body))
 	if err != nil {
@@ -93,7 +99,7 @@ func postJSON(t *testing.T, endpoint, body string, headers map[string]string) (*
 	if err != nil {
 		t.Fatalf("read response: %v", err)
 	}
-	return response, data
+	return httpResult{StatusCode: response.StatusCode, Header: response.Header.Clone(), Body: data}
 }
 
 func TestHTTPProxyForwardsAllowedCallAndHeaders(t *testing.T) {
@@ -103,12 +109,12 @@ func TestHTTPProxyForwardsAllowedCallAndHeaders(t *testing.T) {
 	front := newTestProxy(t, target, &audit)
 	defer front.Close()
 
-	response, body := postJSON(t, front.URL, `{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"read_file","arguments":{"path":"/workspace/a"}}}`, map[string]string{
+	result := postJSON(t, front.URL, `{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"read_file","arguments":{"path":"/workspace/a"}}}`, map[string]string{
 		"Mcp-Session-Id":       "session-123",
 		"MCP-Protocol-Version": "2025-06-18",
 	})
-	if response.StatusCode != http.StatusOK || !strings.Contains(string(body), `"forwarded":true`) {
-		t.Fatalf("status = %d, body = %s", response.StatusCode, body)
+	if result.StatusCode != http.StatusOK || !strings.Contains(string(result.Body), `"forwarded":true`) {
+		t.Fatalf("status = %d, body = %s", result.StatusCode, result.Body)
 	}
 	mu.Lock()
 	defer mu.Unlock()
@@ -134,15 +140,15 @@ func TestHTTPProxyBlocksApprovalCallWithoutForwarding(t *testing.T) {
 	front := newTestProxy(t, target, &audit)
 	defer front.Close()
 
-	response, body := postJSON(t, front.URL, `{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"send_email","arguments":{"to":"outside@example.com"}}}`, nil)
-	if response.StatusCode != http.StatusOK {
-		t.Fatalf("status = %d, body = %s", response.StatusCode, body)
+	result := postJSON(t, front.URL, `{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"send_email","arguments":{"to":"outside@example.com"}}}`, nil)
+	if result.StatusCode != http.StatusOK {
+		t.Fatalf("status = %d, body = %s", result.StatusCode, result.Body)
 	}
-	if response.Header.Get("X-Caplock-Decision") != "require_approval" {
-		t.Fatalf("decision header = %q", response.Header.Get("X-Caplock-Decision"))
+	if result.Header.Get("X-Caplock-Decision") != "require_approval" {
+		t.Fatalf("decision header = %q", result.Header.Get("X-Caplock-Decision"))
 	}
-	if !strings.Contains(string(body), `"code":-32001`) {
-		t.Fatalf("body = %s", body)
+	if !strings.Contains(string(result.Body), `"code":-32001`) {
+		t.Fatalf("body = %s", result.Body)
 	}
 	mu.Lock()
 	defer mu.Unlock()
@@ -160,8 +166,8 @@ func TestHTTPProxyPassesThroughNonToolsCallsAndGET(t *testing.T) {
 	front := newTestProxy(t, target, nil)
 	defer front.Close()
 
-	if response, body := postJSON(t, front.URL, `{"jsonrpc":"2.0","id":3,"method":"initialize","params":{}}`, nil); response.StatusCode != http.StatusOK || !strings.Contains(string(body), `"forwarded":true`) {
-		t.Fatalf("initialize status = %d, body = %s", response.StatusCode, body)
+	if result := postJSON(t, front.URL, `{"jsonrpc":"2.0","id":3,"method":"initialize","params":{}}`, nil); result.StatusCode != http.StatusOK || !strings.Contains(string(result.Body), `"forwarded":true`) {
+		t.Fatalf("initialize status = %d, body = %s", result.StatusCode, result.Body)
 	}
 	response, err := http.Get(front.URL + "/sse")
 	if err != nil {
@@ -198,9 +204,9 @@ func TestHTTPProxyRejectsInvalidInputWithoutForwarding(t *testing.T) {
 	}
 	for _, testCase := range cases {
 		t.Run(testCase.name, func(t *testing.T) {
-			response, body := postJSON(t, front.URL, testCase.body, nil)
-			if response.StatusCode != testCase.code || !strings.Contains(string(body), testCase.text) {
-				t.Fatalf("status = %d, body = %s", response.StatusCode, body)
+			result := postJSON(t, front.URL, testCase.body, nil)
+			if result.StatusCode != testCase.code || !strings.Contains(string(result.Body), testCase.text) {
+				t.Fatalf("status = %d, body = %s", result.StatusCode, result.Body)
 			}
 		})
 	}
@@ -224,9 +230,9 @@ func TestHTTPProxyRejectsOversizedBody(t *testing.T) {
 	}
 	front := httptest.NewServer(handler)
 	defer front.Close()
-	response, body := postJSON(t, front.URL, `{"jsonrpc":"2.0","id":1,"method":"initialize"}`, nil)
-	if response.StatusCode != http.StatusRequestEntityTooLarge || !strings.Contains(string(body), "message size limit") {
-		t.Fatalf("status = %d, body = %s", response.StatusCode, body)
+	result := postJSON(t, front.URL, `{"jsonrpc":"2.0","id":1,"method":"initialize"}`, nil)
+	if result.StatusCode != http.StatusRequestEntityTooLarge || !strings.Contains(string(result.Body), "message size limit") {
+		t.Fatalf("status = %d, body = %s", result.StatusCode, result.Body)
 	}
 	mu.Lock()
 	defer mu.Unlock()
@@ -254,9 +260,9 @@ func TestHTTPProxyAuditFailureFailsClosed(t *testing.T) {
 	}
 	front := httptest.NewServer(handler)
 	defer front.Close()
-	response, body := postJSON(t, front.URL, `{"jsonrpc":"2.0","id":6,"method":"tools/call","params":{"name":"read_file"}}`, nil)
-	if response.StatusCode != http.StatusServiceUnavailable || !strings.Contains(string(body), "audit unavailable") {
-		t.Fatalf("status = %d, body = %s", response.StatusCode, body)
+	result := postJSON(t, front.URL, `{"jsonrpc":"2.0","id":6,"method":"tools/call","params":{"name":"read_file"}}`, nil)
+	if result.StatusCode != http.StatusServiceUnavailable || !strings.Contains(string(result.Body), "audit unavailable") {
+		t.Fatalf("status = %d, body = %s", result.StatusCode, result.Body)
 	}
 	mu.Lock()
 	defer mu.Unlock()
@@ -278,9 +284,9 @@ func TestHTTPProxyUpstreamFailureIsSanitized(t *testing.T) {
 	}
 	front := httptest.NewServer(handler)
 	defer front.Close()
-	response, body := postJSON(t, front.URL, `{"jsonrpc":"2.0","id":7,"method":"initialize"}`, nil)
-	if response.StatusCode != http.StatusBadGateway || !strings.Contains(string(body), "upstream MCP server unavailable") {
-		t.Fatalf("status = %d, body = %s", response.StatusCode, body)
+	result := postJSON(t, front.URL, `{"jsonrpc":"2.0","id":7,"method":"initialize"}`, nil)
+	if result.StatusCode != http.StatusBadGateway || !strings.Contains(string(result.Body), "upstream MCP server unavailable") {
+		t.Fatalf("status = %d, body = %s", result.StatusCode, result.Body)
 	}
 }
 
@@ -293,7 +299,7 @@ func TestHTTPProxyDoesNotForwardBatch(t *testing.T) {
 	defer target.Close()
 	front := newTestProxy(t, target, nil)
 	defer front.Close()
-	_, _ = postJSON(t, front.URL, `[{"jsonrpc":"2.0","id":1,"method":"initialize"}]`, nil)
+	postJSON(t, front.URL, `[{"jsonrpc":"2.0","id":1,"method":"initialize"}]`, nil)
 	if counter.Load() != 0 {
 		t.Fatalf("batch request reached target %d times", counter.Load())
 	}

@@ -20,6 +20,7 @@ import (
 	"github.com/1124875284/caplock/internal/policy"
 )
 
+// Version identifies the matrix output schema.
 const Version = 1
 
 // DefaultEvaluationTime keeps matrix output reproducible when no time is given.
