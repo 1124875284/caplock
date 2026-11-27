@@ -31,9 +31,9 @@ Explicitly out of scope:
 The module and public references must stay coherent:
 
 ```text
-module github.com/caplock/caplock
-install github.com/caplock/caplock/cmd/caplock@latest
-action caplock/caplock@v0
+module github.com/1124875284/caplock
+install github.com/1124875284/caplock/cmd/caplock@latest
+action 1124875284/caplock@v0
 ```
 
 `go test ./internal/releasechecks -v` validates the module path, README install

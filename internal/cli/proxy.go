@@ -13,11 +13,11 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/caplock/caplock/internal/canonical"
-	"github.com/caplock/caplock/internal/lockfile"
-	"github.com/caplock/caplock/internal/policy"
-	"github.com/caplock/caplock/internal/proxy"
-	"github.com/caplock/caplock/internal/trace"
+	"github.com/1124875284/caplock/internal/canonical"
+	"github.com/1124875284/caplock/internal/lockfile"
+	"github.com/1124875284/caplock/internal/policy"
+	"github.com/1124875284/caplock/internal/proxy"
+	"github.com/1124875284/caplock/internal/trace"
 )
 
 type proxySettings struct {

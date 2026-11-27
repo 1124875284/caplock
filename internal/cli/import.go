@@ -9,9 +9,9 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/caplock/caplock/internal/logimport"
-	"github.com/caplock/caplock/internal/safefile"
-	"github.com/caplock/caplock/internal/trace"
+	"github.com/1124875284/caplock/internal/logimport"
+	"github.com/1124875284/caplock/internal/safefile"
+	"github.com/1124875284/caplock/internal/trace"
 )
 
 func newImportCommand() *cobra.Command {

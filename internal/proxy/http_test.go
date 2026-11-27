@@ -12,7 +12,7 @@ import (
 	"sync/atomic"
 	"testing"
 
-	"github.com/caplock/caplock/internal/trace"
+	"github.com/1124875284/caplock/internal/trace"
 )
 
 type capturedRequest struct {

@@ -237,7 +237,7 @@ Requirements: Go 1.24 or newer.
 From source:
 
 ```bash
-git clone https://github.com/caplock/caplock.git
+git clone https://github.com/1124875284/caplock.git
 cd caplock
 make build
 ./bin/caplock version
@@ -246,7 +246,7 @@ make build
 Or install directly:
 
 ```bash
-go install github.com/caplock/caplock/cmd/caplock@latest
+go install github.com/1124875284/caplock/cmd/caplock@latest
 ```
 
 ## 10-minute local path
@@ -511,7 +511,7 @@ and the [runnable example](examples/policy).
 ## GitHub Action
 
 ```yaml
-- uses: caplock/caplock@v0
+- uses: 1124875284/caplock@v0
   with:
     path: .
     lockfile: caplock.lock

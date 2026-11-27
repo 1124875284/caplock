@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/caplock/caplock/internal/mcp"
+	"github.com/1124875284/caplock/internal/mcp"
 )
 
 func TestBuildNormalizesToolsDeterministically(t *testing.T) {

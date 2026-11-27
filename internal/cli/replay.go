@@ -7,8 +7,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/caplock/caplock/internal/policy"
-	"github.com/caplock/caplock/internal/trace"
+	"github.com/1124875284/caplock/internal/policy"
+	"github.com/1124875284/caplock/internal/trace"
 )
 
 func newReplayCommand() *cobra.Command {

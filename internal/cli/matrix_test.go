@@ -9,7 +9,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/caplock/caplock/internal/lockfile"
+	"github.com/1124875284/caplock/internal/lockfile"
 )
 
 const matrixCLIHash = "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"

@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/caplock/caplock/internal/lockfile"
-	"github.com/caplock/caplock/internal/policy"
+	"github.com/1124875284/caplock/internal/lockfile"
+	"github.com/1124875284/caplock/internal/policy"
 )
 
 const testPolicy = `apiVersion: caplock/v1alpha1

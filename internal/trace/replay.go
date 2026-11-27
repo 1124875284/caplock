@@ -9,8 +9,8 @@ import (
 	"time"
 	"unicode"
 
-	"github.com/caplock/caplock/internal/canonical"
-	"github.com/caplock/caplock/internal/policy"
+	"github.com/1124875284/caplock/internal/canonical"
+	"github.com/1124875284/caplock/internal/policy"
 )
 
 // ReplayVersion is the trace replay result version.

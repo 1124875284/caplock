@@ -15,7 +15,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/caplock/caplock/internal/version"
+	"github.com/1124875284/caplock/internal/version"
 )
 
 type httpTransport struct {

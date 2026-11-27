@@ -6,7 +6,7 @@ RUN go mod download
 COPY . .
 ARG VERSION=0.1.0-dev
 RUN CGO_ENABLED=0 go build -trimpath \
-    -ldflags "-s -w -X github.com/caplock/caplock/internal/version.Version=${VERSION}" \
+    -ldflags "-s -w -X github.com/1124875284/caplock/internal/version.Version=${VERSION}" \
     -o /out/caplock ./cmd/caplock
 
 FROM gcr.io/distroless/static-debian12:nonroot

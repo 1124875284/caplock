@@ -1,8 +1,8 @@
 package proxy
 
 import (
-	"github.com/caplock/caplock/internal/canonical"
-	"github.com/caplock/caplock/internal/trace"
+	"github.com/1124875284/caplock/internal/canonical"
+	"github.com/1124875284/caplock/internal/trace"
 )
 
 // TraceFunc receives one replayable call record. It must be safe for concurrent

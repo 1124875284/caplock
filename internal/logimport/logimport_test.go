@@ -10,7 +10,7 @@ import (
 
 	"github.com/santhosh-tekuri/jsonschema/v5"
 
-	"github.com/caplock/caplock/internal/canonical"
+	"github.com/1124875284/caplock/internal/canonical"
 )
 
 func TestConvertJSONLWithExplicitMapping(t *testing.T) {

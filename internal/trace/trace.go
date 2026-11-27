@@ -15,8 +15,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/caplock/caplock/internal/policy"
-	"github.com/caplock/caplock/internal/safefile"
+	"github.com/1124875284/caplock/internal/policy"
+	"github.com/1124875284/caplock/internal/safefile"
 )
 
 const (

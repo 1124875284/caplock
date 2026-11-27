@@ -3,9 +3,9 @@ package packs_test
 import (
 	"testing"
 
-	"github.com/caplock/caplock/internal/evidence"
-	"github.com/caplock/caplock/internal/policy"
-	"github.com/caplock/caplock/packs"
+	"github.com/1124875284/caplock/internal/evidence"
+	"github.com/1124875284/caplock/internal/policy"
+	"github.com/1124875284/caplock/packs"
 )
 
 func TestEmbeddedFinancePolicyPassesBaselineCorpus(t *testing.T) {

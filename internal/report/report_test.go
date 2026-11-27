@@ -5,8 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/caplock/caplock/internal/evidence"
-	"github.com/caplock/caplock/internal/policy"
+	"github.com/1124875284/caplock/internal/evidence"
+	"github.com/1124875284/caplock/internal/policy"
 )
 
 func TestBuildPassingReport(t *testing.T) {

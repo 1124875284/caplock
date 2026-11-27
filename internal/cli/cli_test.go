@@ -13,8 +13,8 @@ import (
 	"sync/atomic"
 	"testing"
 
-	"github.com/caplock/caplock/internal/lockfile"
-	"github.com/caplock/caplock/internal/version"
+	"github.com/1124875284/caplock/internal/lockfile"
+	"github.com/1124875284/caplock/internal/version"
 )
 
 func TestScanJSON(t *testing.T) {

@@ -10,8 +10,8 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/caplock/caplock/internal/evidence"
-	"github.com/caplock/caplock/internal/policy"
+	"github.com/1124875284/caplock/internal/evidence"
+	"github.com/1124875284/caplock/internal/policy"
 )
 
 const Version = 1

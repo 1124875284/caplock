@@ -6,7 +6,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/caplock/caplock/internal/policy"
+	"github.com/1124875284/caplock/internal/policy"
 )
 
 // cedar renders the representable Policy IR subset as Cedar. Caplock deny and

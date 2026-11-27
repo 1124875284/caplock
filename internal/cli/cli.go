@@ -18,13 +18,13 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/caplock/caplock/internal/config"
-	"github.com/caplock/caplock/internal/lockfile"
-	"github.com/caplock/caplock/internal/manifest"
-	"github.com/caplock/caplock/internal/mcp"
-	"github.com/caplock/caplock/internal/policy"
-	"github.com/caplock/caplock/internal/safefile"
-	"github.com/caplock/caplock/internal/version"
+	"github.com/1124875284/caplock/internal/config"
+	"github.com/1124875284/caplock/internal/lockfile"
+	"github.com/1124875284/caplock/internal/manifest"
+	"github.com/1124875284/caplock/internal/mcp"
+	"github.com/1124875284/caplock/internal/policy"
+	"github.com/1124875284/caplock/internal/safefile"
+	"github.com/1124875284/caplock/internal/version"
 )
 
 type exitError struct {

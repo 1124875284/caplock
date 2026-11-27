@@ -24,7 +24,7 @@ if [ -d "$OUT" ]; then
 fi
 mkdir -p "$OUT/bin"
 
-if ! go build -trimpath -ldflags '-s -w -X github.com/caplock/caplock/internal/version.Version=0.1.0-dev-demo' -o "$BIN" ./cmd/caplock; then
+if ! go build -trimpath -ldflags '-s -w -X github.com/1124875284/caplock/internal/version.Version=0.1.0-dev-demo' -o "$BIN" ./cmd/caplock; then
   echo "demo: cannot build caplock" >&2
   exit 1
 fi

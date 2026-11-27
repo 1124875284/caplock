@@ -20,7 +20,7 @@ go mod verify
 
 echo "== native build =="
 mkdir -p "$TMP/bin" "$TMP/gobin"
-go build -trimpath -ldflags '-s -w -X github.com/caplock/caplock/internal/version.Version=0.1.0-dry-run' -o "$TMP/bin/caplock" ./cmd/caplock
+go build -trimpath -ldflags '-s -w -X github.com/1124875284/caplock/internal/version.Version=0.1.0-dry-run' -o "$TMP/bin/caplock" ./cmd/caplock
 
 echo "== install path =="
 GOBIN="$TMP/gobin" go install -trimpath ./cmd/caplock

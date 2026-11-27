@@ -8,9 +8,9 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/caplock/caplock/internal/lockfile"
-	"github.com/caplock/caplock/internal/matrix"
-	"github.com/caplock/caplock/internal/policy"
+	"github.com/1124875284/caplock/internal/lockfile"
+	"github.com/1124875284/caplock/internal/matrix"
+	"github.com/1124875284/caplock/internal/policy"
 )
 
 func newMatrixCommand() *cobra.Command {

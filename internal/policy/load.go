@@ -12,7 +12,7 @@ import (
 
 	"gopkg.in/yaml.v3"
 
-	"github.com/caplock/caplock/internal/safefile"
+	"github.com/1124875284/caplock/internal/safefile"
 )
 
 const (

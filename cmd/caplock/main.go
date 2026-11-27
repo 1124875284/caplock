@@ -5,7 +5,7 @@ package main
 import (
 	"os"
 
-	"github.com/caplock/caplock/internal/cli"
+	"github.com/1124875284/caplock/internal/cli"
 )
 
 func main() {

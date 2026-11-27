@@ -9,7 +9,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/caplock/caplock/internal/config"
+	"github.com/1124875284/caplock/internal/config"
 )
 
 func TestBuildIsDeterministicAndRedactsSecrets(t *testing.T) {

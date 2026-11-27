@@ -11,9 +11,9 @@ import (
 	"io"
 	"sort"
 
-	"github.com/caplock/caplock/internal/inventory"
-	"github.com/caplock/caplock/internal/lockfile"
-	"github.com/caplock/caplock/internal/mcp"
+	"github.com/1124875284/caplock/internal/inventory"
+	"github.com/1124875284/caplock/internal/lockfile"
+	"github.com/1124875284/caplock/internal/mcp"
 )
 
 // Build hashes and classifies a connected server's MCP tools without retaining

@@ -8,8 +8,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/caplock/caplock/internal/canonical"
-	"github.com/caplock/caplock/internal/trace"
+	"github.com/1124875284/caplock/internal/canonical"
+	"github.com/1124875284/caplock/internal/trace"
 )
 
 const replayHash = "sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"

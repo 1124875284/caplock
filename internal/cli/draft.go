@@ -10,8 +10,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/caplock/caplock/internal/intent"
-	"github.com/caplock/caplock/internal/safefile"
+	"github.com/1124875284/caplock/internal/intent"
+	"github.com/1124875284/caplock/internal/safefile"
 )
 
 func newDraftCommand() *cobra.Command {

@@ -13,7 +13,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/caplock/caplock/internal/safefile"
+	"github.com/1124875284/caplock/internal/safefile"
 )
 
 const maxConfigBytes = 16 << 20

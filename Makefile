@@ -1,7 +1,7 @@
 BINARY ?= bin/caplock
 OPA_BIN ?= opa
 VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo 0.1.0-dev)
-LDFLAGS := -s -w -X github.com/caplock/caplock/internal/version.Version=$(VERSION)
+LDFLAGS := -s -w -X github.com/1124875284/caplock/internal/version.Version=$(VERSION)
 
 .PHONY: build install test test-race policy-test policy-report verify-rego fuzz cover lint fmt fmt-check vet check bench demo demo-screenshots demo-verify release-check clean-room release-dry-run security-negative ci-e2e clean
 

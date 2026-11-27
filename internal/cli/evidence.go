@@ -9,11 +9,11 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/caplock/caplock/internal/evidence"
-	"github.com/caplock/caplock/internal/exporter"
-	"github.com/caplock/caplock/internal/lockfile"
-	"github.com/caplock/caplock/internal/policy"
-	"github.com/caplock/caplock/internal/report"
+	"github.com/1124875284/caplock/internal/evidence"
+	"github.com/1124875284/caplock/internal/exporter"
+	"github.com/1124875284/caplock/internal/lockfile"
+	"github.com/1124875284/caplock/internal/policy"
+	"github.com/1124875284/caplock/internal/report"
 )
 
 type evidenceOptions struct {

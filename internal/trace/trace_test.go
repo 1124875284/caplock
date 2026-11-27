@@ -8,8 +8,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/caplock/caplock/internal/canonical"
-	"github.com/caplock/caplock/internal/policy"
+	"github.com/1124875284/caplock/internal/canonical"
+	"github.com/1124875284/caplock/internal/policy"
 )
 
 const validHash = "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"

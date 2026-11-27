@@ -9,10 +9,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/caplock/caplock/internal/canonical"
-	"github.com/caplock/caplock/internal/inventory"
-	"github.com/caplock/caplock/internal/lockfile"
-	"github.com/caplock/caplock/internal/policy"
+	"github.com/1124875284/caplock/internal/canonical"
+	"github.com/1124875284/caplock/internal/inventory"
+	"github.com/1124875284/caplock/internal/lockfile"
+	"github.com/1124875284/caplock/internal/policy"
 )
 
 // Version is the audit record version.

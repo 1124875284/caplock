@@ -10,9 +10,9 @@ import (
 
 	"github.com/santhosh-tekuri/jsonschema/v5"
 
-	"github.com/caplock/caplock/internal/lockfile"
-	"github.com/caplock/caplock/internal/policy"
-	"github.com/caplock/caplock/packs"
+	"github.com/1124875284/caplock/internal/lockfile"
+	"github.com/1124875284/caplock/internal/policy"
+	"github.com/1124875284/caplock/packs"
 )
 
 func TestBuildFindsAndEvaluatesCandidatePaths(t *testing.T) {

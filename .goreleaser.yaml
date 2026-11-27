@@ -15,7 +15,7 @@ builds:
       - amd64
       - arm64
     ldflags:
-      - -s -w -X github.com/caplock/caplock/internal/version.Version={{.Version}}
+      - -s -w -X github.com/1124875284/caplock/internal/version.Version={{.Version}}
 
 archives:
   - id: caplock

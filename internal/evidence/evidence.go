@@ -14,11 +14,11 @@ import (
 
 	"gopkg.in/yaml.v3"
 
-	"github.com/caplock/caplock/internal/lockfile"
-	"github.com/caplock/caplock/internal/policy"
-	"github.com/caplock/caplock/internal/safefile"
-	"github.com/caplock/caplock/internal/trace"
-	"github.com/caplock/caplock/packs"
+	"github.com/1124875284/caplock/internal/lockfile"
+	"github.com/1124875284/caplock/internal/policy"
+	"github.com/1124875284/caplock/internal/safefile"
+	"github.com/1124875284/caplock/internal/trace"
+	"github.com/1124875284/caplock/packs"
 )
 
 const (

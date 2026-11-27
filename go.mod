@@ -1,4 +1,4 @@
-module github.com/caplock/caplock
+module github.com/1124875284/caplock
 
 go 1.24.0
 

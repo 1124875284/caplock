@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/caplock/caplock/internal/version"
+	"github.com/1124875284/caplock/internal/version"
 )
 
 type rpcTransport interface {

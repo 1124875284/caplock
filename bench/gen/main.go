@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/caplock/caplock/internal/lockfile"
+	"github.com/1124875284/caplock/internal/lockfile"
 )
 
 type fixture struct {

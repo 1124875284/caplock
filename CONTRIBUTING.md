@@ -7,7 +7,7 @@ Thanks for helping make agent permissions reviewable.
 Requirements: Go 1.24 or newer.
 
 ```bash
-git clone https://github.com/caplock/caplock.git
+git clone https://github.com/1124875284/caplock.git
 cd caplock
 go mod download
 make build

@@ -4,7 +4,7 @@
 
 Please do not open a public issue. Use GitHub's private vulnerability reporting:
 
-<https://github.com/caplock/caplock/security/advisories/new>
+<https://github.com/1124875284/caplock/security/advisories/new>
 
 If GitHub private reporting is unavailable, email
 [qq1124875284@163.com](mailto:qq1124875284@163.com).

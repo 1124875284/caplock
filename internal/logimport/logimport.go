@@ -18,9 +18,9 @@ import (
 
 	"gopkg.in/yaml.v3"
 
-	"github.com/caplock/caplock/internal/canonical"
-	"github.com/caplock/caplock/internal/safefile"
-	"github.com/caplock/caplock/internal/trace"
+	"github.com/1124875284/caplock/internal/canonical"
+	"github.com/1124875284/caplock/internal/safefile"
+	"github.com/1124875284/caplock/internal/trace"
 )
 
 const (
